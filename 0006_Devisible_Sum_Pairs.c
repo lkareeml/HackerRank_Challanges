@@ -4,7 +4,7 @@
 return === 5
 */
 int divisibleSumPairs(int n, int k, int ar_count, int* ar) {
-    int temp;
+    int x,y;
     int count = 0;
     for(int i = 0; i < n ; i++)
     {
@@ -12,10 +12,12 @@ int divisibleSumPairs(int n, int k, int ar_count, int* ar) {
         {
             if(ar[i] == ar[j])
             {
-                continue;
+                //continue; In case you want i>j but didnt work with cases
             }
-            temp = (ar[i] + ar[j]);
-            if(((temp/k) != 0) && ((temp%k) == 0) ){   
+            x = (ar[i] + ar[j]) / k;
+            y = (ar[i] + ar[j]) % k;
+
+            if((x != 0) && (y == 0)){   
                 count++;
             }
         }
