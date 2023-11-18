@@ -2,7 +2,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-#include <ctype.h>
 
 void converter(char * s, char* s_out, int n){
     int S_Flag = 0;
@@ -102,7 +101,10 @@ int main() {
     //printf("%c",67);
     
     for(int i =0; i < n ;i++){
+        ///Filter ALL non characters / numbers / New line / Spaces
+        if( (s_output[i]==10)||(s_output[i]>= 32 && s_output[i]<126)) 
         printf("%c",s_output[i]);
+        
         if(s_output[i] < 10 || s_output[i] > 122)   break;
         if(s_output[i+1] == 10)
             if(s_output[i+2] == '\0')
