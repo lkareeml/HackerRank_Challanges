@@ -3,10 +3,15 @@
 #include <math.h>
 #include <stdlib.h>
 
-void converter(char * s, char* s_out, int n){
+int n = 300;
+char sz[300];
+char s_input[300];
+char s_out[300];
+    
+void converter(char *s, char *s_out, int n){
     int S_Flag = 0;
     int C_Flag = 0;
-    int M_Flag = 0;
+    int CM_Flag = 0;
     int CC_Flag = 0;
     int j = 0;
     for(int i = 0;i < n;i++){
@@ -17,15 +22,13 @@ void converter(char * s, char* s_out, int n){
             continue;
         }
         if(s[i] == 'C' && s[i+1] == ';' &&  s[i+3] == ';'){
-            if(s[i+2] == 77) 
-            {
-                M_Flag = 1;
+            if(s[i+2] == 77) {
+                CM_Flag = 1;
                 CC_Flag = 0;
             }
-            else if(s[i+2] == 67)
-            {
+            else if(s[i+2] == 67){
                 CC_Flag = 1;
-                M_Flag = 0;
+                CM_Flag = 0;
             }
             C_Flag = 1;
             S_Flag = 0;    
@@ -34,22 +37,24 @@ void converter(char * s, char* s_out, int n){
         }
         
         if(S_Flag == 1 && C_Flag == 0){
+            if(s[i] == 40 && s[i+1] == 41){
+                if( s[i+2] == 10){
+                    i = i + 2;
+                }
+            }
             if(isupper(s[i]) && s[i-1] != ';'){
-                s_out[j] = ' ';
-                //printf("%c",s_out[j]);
+                s_out[j] = 32;
                 j++;
                 s_out[j] = s[i] + 32;
             }
             else if(isupper(s[i]) && s[i-1] == ';'){
                 s_out[j] = s[i] + 32;
             }
-            else if(s[i+1] != '\0'){
-                s_out[j] = s[i];
-            }
             else if(s[i] == 10 && s[i+1] == '\0'){
                 break;
+            }else{
+                s_out[j] = s[i];
             }
-            //printf("%c",s_out[j]);
             j++;
         }
         if(S_Flag == 0 && C_Flag == 1){
@@ -58,15 +63,13 @@ void converter(char * s, char* s_out, int n){
                 s_out[j] = (s[i] - 32);
                 CC_Flag = 0;
             }
-            else if(M_Flag == 1 && s[i] == 10){
+            else if(CM_Flag == 1 && s[i] == 10){
                 s_out[j] = '(';
-                //printf("%c",s_out[j]);
                 j++;
                 s_out[j] = ')';
-                //printf("%c",s_out[j]);
                 j++;
                 s_out[j] = 10;
-                M_Flag = 0;
+                CM_Flag = 0;
             }
             else if(s[i] != '\0' && s[i] != 32 && s[i] != 10){
                 s_out[j] = s[i];
@@ -75,40 +78,43 @@ void converter(char * s, char* s_out, int n){
                 i++;
                 s_out[j] = (s[i] - 32);
             }
-            else if(s[i] == 10 && M_Flag == 0 && s[i+1] == '\0'){
+            else if(s[i] == 10 && CM_Flag == 0 && s[i+1] == '\0'){
                 break;
             }else s_out[j] = s[i];
-            //printf("%c",s_out[j]);
             j++;
-        }
-        
+        }  
     }
 }
 
-
-int main() {
-    // Enter your code here. Read input from STDIN. Print output to STDOUT
-    int n = 300;
-    char s_input[n];
-    char s_output[n];
+int main(){
     for(int i =0; i < n ;i++){
-        s_input[i] = getchar();
-        if(s_input[i] < 10 || s_input[i] > 122) 
-        {s_input[i] = 10;break;}
+    s_input[i] = 0;
+    s_out[i] = 0;
     }
-    converter(&s_input,&s_output,n);
-    //printf("%c",10);
-    //printf("%c",67);
+    /// Input Filter
+    for(int i =0; i < n ;i++){
+        sz[i] = getchar();
+        if(sz[i]==10||sz[i]==32||sz[i]==40||sz[i]==41||sz[i]==59) // NewLine - Space - ();
+            s_input[i] = sz[i];
+        else if(sz[i] > 64 && sz[i] < 91) // Upper Case Alphabit
+            s_input[i] = sz[i];
+        else if(sz[i] > 96 && sz[i] < 123)// Lower Case Alphabit
+            s_input[i] = sz[i];
+    }
+    
+    converter(s_input, s_out,n);
     
     for(int i =0; i < n ;i++){
-        ///Filter ALL non characters / numbers / New line / Spaces
-        if( (s_output[i]==10)||(s_output[i]>= 32 && s_output[i]<126)) 
-        printf("%c",s_output[i]);
-        
-        if(s_output[i] < 10 || s_output[i] > 122)   break;
-        if(s_output[i+1] == 10)
-            if(s_output[i+2] == '\0')
-                break;
+        if(s_out[i]==32||s_out[i]==40||s_out[i]==41||s_out[i]==59) // NewLine - Space - ();
+            printf("%c",s_out[i]);
+        else if(s_out[i] > 64 && s_out[i] < 91) // Upper Case Alphabit
+            printf("%c",s_out[i]);
+        else if(s_out[i] > 96 && s_out[i] < 123)// Lower Case Alphabit
+            printf("%c",s_out[i]);
+        else if((s_out[i]==10) && (s_out[i+1] != 10)){
+            if((s_out[i+1] > 64 && s_out[i+1] < 91) || (s_out[i+1] > 96 && s_out[i+1] < 123))
+                printf("%c",s_out[i]);
+        }
     }
     return 0;
 }
